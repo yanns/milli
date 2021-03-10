@@ -18,9 +18,6 @@ pub enum Criterion {
     /// Documents with quey words contained in more important
     /// attributes are considred better.
     Attribute,
-    /// Documents with query words at the front of an attribute is
-    /// considered better than if it was at the back.
-    WordsPosition,
     /// Sorted by the similarity of the matched words with the query words.
     Exactness,
     /// Sorted by the increasing value of the field specified.
@@ -36,7 +33,6 @@ impl Criterion {
             "words" => Ok(Criterion::Words),
             "proximity" => Ok(Criterion::Proximity),
             "attribute" => Ok(Criterion::Attribute),
-            "wordsposition" => Ok(Criterion::WordsPosition),
             "exactness" => Ok(Criterion::Exactness),
             text => {
                 let re = Regex::new(r#"(asc|desc)\(([\w_-]+)\)"#)?;
@@ -56,11 +52,10 @@ impl Criterion {
 
 pub fn default_criteria() -> Vec<Criterion> {
     vec![
-        Criterion::Typo,
         Criterion::Words,
+        Criterion::Typo,
         Criterion::Proximity,
         Criterion::Attribute,
-        Criterion::WordsPosition,
         Criterion::Exactness,
     ]
 }
@@ -74,7 +69,6 @@ impl fmt::Display for Criterion {
             Words           => f.write_str("words"),
             Proximity       => f.write_str("proximity"),
             Attribute       => f.write_str("attribute"),
-            WordsPosition   => f.write_str("wordsPosition"),
             Exactness       => f.write_str("exactness"),
             Asc(attr)       => write!(f, "asc({})", attr),
             Desc(attr)      => write!(f, "desc({})", attr),
