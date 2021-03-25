@@ -47,6 +47,8 @@ pub struct Index {
     pub word_prefix_pair_proximity_docids: Database<StrStrU8Codec, CboRoaringBitmapCodec>,
     /// Maps the word, level and position range with the docids that corresponds to it.
     pub word_level_position_docids: Database<StrLevelPositionCodec, CboRoaringBitmapCodec>,
+    /// Maps the level positions of a word prefix with all the docids where this prefix appears.
+    pub word_prefix_level_position_docids: Database<StrLevelPositionCodec, CboRoaringBitmapCodec>,
     /// Maps the facet field id and the globally ordered value with the docids that corresponds to it.
     pub facet_field_id_value_docids: Database<ByteSlice, CboRoaringBitmapCodec>,
     /// Maps the document id, the facet field id and the globally ordered value.
@@ -57,7 +59,7 @@ pub struct Index {
 
 impl Index {
     pub fn new<P: AsRef<Path>>(mut options: heed::EnvOpenOptions, path: P) -> anyhow::Result<Index> {
-        options.max_dbs(10);
+        options.max_dbs(11);
 
         let env = options.open(path)?;
         let main = env.create_poly_database(Some("main"))?;
@@ -67,6 +69,7 @@ impl Index {
         let word_pair_proximity_docids = env.create_database(Some("word-pair-proximity-docids"))?;
         let word_prefix_pair_proximity_docids = env.create_database(Some("word-prefix-pair-proximity-docids"))?;
         let word_level_position_docids = env.create_database(Some("word-level-position-docids"))?;
+        let word_prefix_level_position_docids = env.create_database(Some("word-prefix-level-position-docids"))?;
         let facet_field_id_value_docids = env.create_database(Some("facet-field-id-value-docids"))?;
         let field_id_docid_facet_values = env.create_database(Some("field-id-docid-facet-values"))?;
         let documents = env.create_database(Some("documents"))?;
@@ -80,6 +83,7 @@ impl Index {
             word_pair_proximity_docids,
             word_prefix_pair_proximity_docids,
             word_level_position_docids,
+            word_prefix_level_position_docids,
             facet_field_id_value_docids,
             field_id_docid_facet_values,
             documents,
