@@ -168,7 +168,7 @@ impl<'a> Search<'a> {
         let mut excluded_documents = RoaringBitmap::new();
         let mut documents_ids = Vec::with_capacity(self.limit);
 
-        while let Some(FinalResult { candidates, bucket_candidates, .. }) = criteria.next()? {
+        while let Some(FinalResult { candidates, bucket_candidates, .. }) = criteria.next(&excluded_documents)? {
             debug!("Number of candidates found {}", candidates.len());
 
             let excluded = take(&mut excluded_documents);
